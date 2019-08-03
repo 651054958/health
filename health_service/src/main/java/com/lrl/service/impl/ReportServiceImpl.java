@@ -3,6 +3,7 @@ package com.lrl.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.lrl.dao.MemberDao;
 import com.lrl.dao.OrderDao;
+import com.lrl.service.PackageService;
 import com.lrl.service.ReportService;
 import com.lrl.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.Map;
  * \
  * @date 2019/7/31 21:19
  */
-@Service
+@Service(interfaceClass = ReportService.class)
 public class ReportServiceImpl implements ReportService {
     @Autowired
     private MemberDao memberDao;

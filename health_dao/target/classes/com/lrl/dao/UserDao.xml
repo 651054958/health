@@ -44,4 +44,33 @@
     <select id="findAll" resultType="com.lrl.pojo.User">
         select id,gender,username,remark from t_user
     </select>
+
+    <select id="findAllRoles" resultType="com.lrl.pojo.Role">
+        SELECT id,name,keyword,description from t_role
+    </select>
+
+    <insert id="addUser" parameterType="com.lrl.pojo.User">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user(birthday,gender,username,password,remark,station,telephone) values(#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone})
+    </insert>
+
+    <insert id="addUserRoles" parameterType="integer">
+        insert into t_user_role(role_id,user_id) VALUES(#{role_id},#{user_id})
+    </insert>
+
+    <select id="findByCondition" parameterType="string" resultType="com.lrl.pojo.User">
+        select * from t_user
+        <where>
+            <if test="value!=null and value.length>0">
+                username like #{value} or telephone like #{value}
+            </if>
+        </where>
+    </select>
+
+    <select id="findUserById" parameterType="integer" resultType="com.lrl.pojo.User">
+        select id,username,remark,gender,telephone, station from t_user where
+        id=${value}
+    </select>
 </mapper>

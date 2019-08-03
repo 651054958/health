@@ -2,10 +2,15 @@ package com.lrl.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.lrl.constant.MessageConstant;
+import com.lrl.entity.PageResult;
+import com.lrl.entity.QueryPageBean;
 import com.lrl.entity.Result;
+import com.lrl.exception.HealthException;
+import com.lrl.pojo.Role;
 import com.lrl.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,13 +41,17 @@ public class UserController {
         }
     }
 
-    @RequestMapping("/getUserInfoList")
-    public Result getUserInfoList(){
+    /**
+     * 分页查询操作
+     * @return
+     */
+    @RequestMapping("/findPage")
+    public Result getUserInfoList(@RequestBody QueryPageBean pageBean) {
         try {
-            List<com.lrl.pojo.User> userList = userService.findAll();
-            return new Result(true,MessageConstant.GET_USERLIST_SUCCESS,userList);
+            PageResult pageResult = userService.findPage(pageBean);
+            return new Result(true, MessageConstant.GET_ROLES_SUCCESS, pageResult);
         } catch (Exception e) {
-            return new Result(false,MessageConstant.GET_USERLIST_FAILED);
+            return new Result(false, MessageConstant.GET_ROLES_FAILED);
         }
     }
 
@@ -50,9 +59,39 @@ public class UserController {
      * find all permissions
      * @return
      */
-    @RequestMapping("/findAll")
-    public Result fun(){
+    @RequestMapping("/findAllRoles")
+    public Result findAllRoles(){
+        try {
+            List<Role> roles = userService.findAllRoleIds();
+            return new Result(true,MessageConstant.GET_ROLES_SUCCESS,roles);
+        } catch (Exception e) {
+            return new Result(false,MessageConstant.GET_ROLES_FAILED);
+        }
+    }
 
-        return new Result();
+    @RequestMapping("/addUser")
+    public Result fun(@RequestBody com.lrl.pojo.User user,Integer[] roleIds){
+        if (!(roleIds.length>0&&roleIds!=null)) {
+            throw new HealthException(MessageConstant.MUST_CHOOSE_ONE_ROLE);
+        }
+        if (user.getTelephone().length()!=11) {
+            throw new HealthException(MessageConstant.ERROR_TELEPHONE_LENGTH);
+        }
+        try {
+            userService.addUser(roleIds,user);
+            return new Result(true,MessageConstant.ADD_USER_SUCCESS);
+        } catch (Exception e) {
+            return new Result(false,MessageConstant.ADD_USER_FAILED);
+        }
+    }
+
+    @RequestMapping("/findById")
+    public Result fun(Integer id){
+        try {
+            com.lrl.pojo.User user = userService.findById(id);
+            return new Result(true,MessageConstant.GET_USER_SUCCESS,user);
+        } catch (Exception e) {
+            return new Result(false,MessageConstant.GET_USER_FAILED);
+        }
     }
 }

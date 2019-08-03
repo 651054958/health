@@ -1,6 +1,9 @@
 package com.lrl.dao;
 
+import com.github.pagehelper.Page;
+import com.lrl.pojo.Role;
 import com.lrl.pojo.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +21,31 @@ public interface UserDao {
      */
     List<User> findAll();
 
+    /**
+     * findAllRoles
+     * @return
+     */
+    List<Role> findAllRoles();
+
+    /**
+     * add user base info
+     * @param user
+     */
+    void addUser(User user);
+
+    /**
+     * add userRoles
+     * @param roleId
+     * @param userId
+     */
+    void addUserRoles(@Param("role_id") Integer roleId, @Param("user_id") Integer userId);
+
+    /**
+     * findByCondition
+     * @param queryString
+     * @return
+     */
+    Page<User> findByCondition(String queryString);
+
+    User findUserById(Integer id);
 }

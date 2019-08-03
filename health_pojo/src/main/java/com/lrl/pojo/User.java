@@ -11,12 +11,8 @@ import java.util.Set;
 public class User implements Serializable{
 //id,birthday,gender,username,password,remark,station,telephone
 
-/*username
-password
-gender
-telephone
-remark
-birthday*/
+/*birthday,gender,username,password,remark,station,telephone*/
+/*#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone}*/
 
 
     private Integer id; // 主键

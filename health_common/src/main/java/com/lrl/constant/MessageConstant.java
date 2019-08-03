@@ -87,4 +87,15 @@ public class MessageConstant {
     public static final String GET_PACKAGE_REPORT_FAILED = "获取套餐统计信息失败";
     public static final String GET_USERLIST_SUCCESS = "获取用户列表成功";
     public static final String GET_USERLIST_FAILED = "获取用户列表失败";
+    public static final String GET_ROLES_SUCCESS = "获取roles成功";
+    public static final String GET_ROLES_FAILED = "获取roles失败";
+    public static final String ADD_USER_SUCCESS = "添加user成功";
+    public static final String ADD_USER_FAILED = "添加user失败";
+    public static final String USERNAME_EXIST_ERROR = "当前用户名已被占用";
+    public static final String MUST_CHOOSE_ONE_ROLE = "必须至少选择一种角色";
+    public static final String ERROR_TELEPHONE_LENGTH = "tel length error";
+    public static final String GET_USER_SUCCESS = "get user suc";
+    public static final String GET_USER_FAILED = "get user FAI";
+    public static final String GET_ROLEIDS_SUCCESS = "get roleIds suc";
+    public static final String GET_ROLEIDS_FAILED = "get roleIds FAILED";
 }

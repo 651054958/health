@@ -1,10 +1,20 @@
 package com.lrl.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.lrl.constant.MessageConstant;
 import com.lrl.dao.UserDao;
+import com.lrl.entity.PageResult;
+import com.lrl.entity.QueryPageBean;
+import com.lrl.exception.HealthException;
+import com.lrl.pojo.CheckGroup;
+import com.lrl.pojo.Role;
 import com.lrl.pojo.User;
 import com.lrl.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -16,7 +26,7 @@ import java.util.List;
  * \
  * @date 2019/7/29 11:53
  */
-@Service
+@Service(interfaceClass = UserService.class)
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
@@ -30,5 +40,46 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return userDao.findAll();
+    }
+
+    @Override
+    public List<Role> findAllRoleIds() {
+        return userDao.findAllRoles();
+    }
+
+    @Override
+    @Transactional
+    public void addUser(Integer[] roleIds, User user) throws HealthException{
+        //checkUsername
+        User userByUsername = userDao.findUserByUsername(user.getUsername());
+        if (userByUsername!=null) {
+            throw new HealthException(MessageConstant.USERNAME_EXIST_ERROR);
+        }
+        userDao.addUser(user);
+        Integer userId = user.getId();
+        for (Integer roleId : roleIds) {
+            userDao.addUserRoles(roleId,userId);
+        }
+    }
+
+    /**
+     * findPage
+     *
+     * @param pageBean
+     * @return
+     */
+    @Override
+    public PageResult findPage(QueryPageBean pageBean) {
+        if (!StringUtils.isEmpty(pageBean.getQueryString())) {
+            pageBean.setQueryString("%"+pageBean.getQueryString()+"%");
+        }
+        PageHelper.startPage(pageBean.getCurrentPage(),pageBean.getPageSize());
+        Page<User> page = userDao.findByCondition(pageBean.getQueryString());
+        return new PageResult(page.getTotal(),page.getResult());
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userDao.findUserById(id);
     }
 }
