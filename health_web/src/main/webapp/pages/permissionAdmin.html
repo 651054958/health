@@ -94,12 +94,12 @@
                                         <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
                                             <el-row>
                                                 <el-col :span="12">
-                                                    <el-form-item label="用户名">
+                                                    <el-form-item label="用户名" prop="username">
                                                         <el-input v-model="formData.username"/>
                                                     </el-form-item>
                                                 </el-col>
                                                 <el-col :span="12">
-                                                    <el-form-item label="密码">
+                                                    <el-form-item label="密码" prop="password">
                                                         <el-input v-model="formData.password"/>
                                                     </el-form-item>
                                                 </el-col>
@@ -135,21 +135,21 @@
                                             </el-row>
                                         </el-form>
                                     </el-tab-pane>
-                                    <el-tab-pane label="权限信息" name="second">
+                                    <el-tab-pane label="角色信息" name="second">
 									<div class="checkScrol">
                                         <table class="datatable">
                                             <thead>
                                             <tr>
                                                 <th>选择</th>
-                                                <th>权限名称</th>
-                                                <th>权限关键字</th>
-                                                <th>权限描述</th>
+                                                <th>角色名称</th>
+                                                <th>角色关键字</th>
+                                                <th>角色描述</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr v-for="c in tableData">
                                                 <td>
-                                                    <input :id="c.id" v-model="checkitemIds" type="checkbox" :value="c.id">
+                                                    <input :id="c.id" v-model="roleIds" type="checkbox" :value="c.id">
                                                 </td>
                                                 <td><label :for="c.id">{{c.code}}</label></td>
                                                 <td><label :for="c.id">{{c.name}}</label></td>
@@ -233,11 +233,11 @@
 												<tbody>
 													<tr v-for="c in tableData">
 														<td>
-															<input :id="c.id" v-model="checkitemIds" type="checkbox" :value="c.id">
+															<input :id="c.id" v-model="roleIds" type="checkbox" :value="c.id">
 														</td>
-														<td><label :for="c.id">{{c.code}}</label></td>
 														<td><label :for="c.id">{{c.name}}</label></td>
-														<td><label :for="c.id">{{c.remark}}</label></td>
+														<td><label :for="c.id">{{c.keyword}}</label></td>
+														<td><label :for="c.id">{{c.description}}</label></td>
 													</tr>
 												</tbody>
 											</table>
@@ -270,17 +270,15 @@
                 dataList: [],//列表数据
                 formData: {},//表单数据
                 tableData:[],//新增和编辑表单中对应的权限项列表数据
-                checkitemIds:[],//新增和编辑表单中权限对应的复选框，基于双向绑定可以进行回显和数据提交
+                roleIds:[],//新增和编辑表单中权限对应的复选框，基于双向绑定可以进行回显和数据提交
                 dialogFormVisible: false,//控制添加窗口显示/隐藏
                 dialogFormVisible4Edit:false,//控制编辑窗口显示/隐藏
                 rules: {//校验规则
-                    code: [
-                        { required: true, message: '请输入活动名称', trigger: 'blur' },
-                        { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                    password: [
+                        { required: true, message: '请输入用户名', trigger: 'blur' },
+                        { min: 6, max: 12, message: '密码长度在 6 到 12 个字符', trigger: 'blur' }
                     ],
-                    name: [
-                        { required: true, message: '请选择活动区域', trigger: 'change' }
-                    ]
+                    username: [{ required: true, message: '项目名称为必填项', trigger: 'blur' }]
                 }
             },
             created() {
@@ -289,7 +287,7 @@
             methods: {
                 //编辑
                 handleEdit() {
-                    axios.post("/checkgroup/update.do?checkitemids="+this.checkitemIds,this.formData)
+                    axios.post("/checkgroup/update.do?checkitemids="+this.roleIds,this.formData)
                         .then((response)=>{
                             if (response.data.flag) {
                                 this.dialogFormVisible4Edit = false;
@@ -312,6 +310,11 @@
                         if (valid) {
                             console.log("success submit");
                             //axios
+                            axios.post("/user/addUser.do?roleIds="+this.roleIds,this.formData).then(res=>{
+
+                            }).catch(e=>{
+                                this.$message.error("internet error")
+                            });
                         } else {
                             console.log('error submit!!');
                             return false;
@@ -339,13 +342,13 @@
                 resetForm() {
                     this.formData = {};
                     this.activeName='first';
-                    this.checkitemIds = [];
+                    this.roleIds = [];
                 },
                 // 弹出新建窗口
                 handleCreate() {
                     this.resetForm();
                     this.dialogFormVisible = true;
-                    axios.post("/user/findAll.do")
+                    axios.post("/user/findAllRoles.do")
                         .then((response)=>{
                             if (response.data.flag) {
                                 vue.tableData = response.data.data;
