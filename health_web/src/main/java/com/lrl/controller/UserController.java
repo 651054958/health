@@ -94,4 +94,25 @@ public class UserController {
             return new Result(false,MessageConstant.GET_USER_FAILED);
         }
     }
+
+    @RequestMapping("/update")
+    public Result update(@RequestBody com.lrl.pojo.User user,Integer[] roleIds){
+
+        try {
+            userService.update(user,roleIds);
+            return new Result(true,MessageConstant.SUCCESS_UPDATE_USER);
+        } catch (Exception e) {
+            return new Result(false,MessageConstant.FAILED_UPDATE_USER);
+        }
+    }
+
+    @RequestMapping("/delete")
+    public Result delete(Integer id){
+        try {
+            userService.deleteById(id);
+            return new Result(true,MessageConstant.DELETE_SUCCESS);
+        } catch (Exception e) {
+            return new Result(false,MessageConstant.DELETE_FAILED);
+        }
+    }
 }

@@ -70,7 +70,28 @@
     </select>
 
     <select id="findUserById" parameterType="integer" resultType="com.lrl.pojo.User">
-        select id,username,remark,gender,telephone, station from t_user where
+        select id,username,remark,gender,password,telephone, station from t_user
+        where
         id=${value}
     </select>
+
+    <delete id="deleteRolesById" parameterType="integer">
+      delete from t_user_role where user_id=${value}
+    </delete>
+
+    <update id="update" parameterType="com.lrl.pojo.User">
+         update t_user set
+        birthday=#{birthday},
+        gender=#{gender},
+        username=#{username},
+        password=#{password},
+        remark=#{remark},
+        station=#{station},
+        telephone=#{telephone}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteById" parameterType="integer">
+        delete from t_user where id=#{value}
+    </delete>
 </mapper>

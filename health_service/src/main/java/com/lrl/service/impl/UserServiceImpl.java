@@ -13,6 +13,7 @@ import com.lrl.pojo.Role;
 import com.lrl.pojo.User;
 import com.lrl.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -80,6 +81,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Integer id) {
-        return userDao.findUserById(id);
+        User userById = userDao.findUserById(id);
+        userById.setPassword("");
+        return userById;
+    }
+
+    @Override
+    @Transactional
+    public void update(User user, Integer[] roleIds) {
+        String password = user.getPassword();
+        if (password==null || password.length()==0 ||password=="") {
+            User userById = userDao.findUserById(user.getId());
+            user.setPassword(userById.getPassword());
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
+        userDao.update(user);
+        Integer userId = user.getId();
+        userDao.deleteRolesById(userId);
+        for (Integer roleId : roleIds) {
+            userDao.addUserRoles(roleId,userId);
+        }
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        userDao.deleteById(id);
     }
 }

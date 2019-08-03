@@ -47,5 +47,24 @@ public interface UserDao {
      */
     Page<User> findByCondition(String queryString);
 
+    /**
+     * findUserById
+     * @param id
+     * @return
+     */
     User findUserById(Integer id);
+
+    /**
+     * deleteRolesById
+     * @param userId
+     */
+    void deleteRolesById(Integer userId);
+
+    /**
+     * update user
+     * @param user
+     */
+    void update(User user);
+
+    void deleteById(Integer id);
 }

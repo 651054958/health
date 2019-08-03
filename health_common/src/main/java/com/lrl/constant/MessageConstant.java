@@ -98,4 +98,8 @@ public class MessageConstant {
     public static final String GET_USER_FAILED = "get user FAI";
     public static final String GET_ROLEIDS_SUCCESS = "get roleIds suc";
     public static final String GET_ROLEIDS_FAILED = "get roleIds FAILED";
+    public static final String SUCCESS_UPDATE_USER = "update user success";
+    public static final String FAILED_UPDATE_USER = "update user FAILED";
+    public static final String DELETE_SUCCESS = "delete success";
+    public static final String DELETE_FAILED = "delete failed";
 }

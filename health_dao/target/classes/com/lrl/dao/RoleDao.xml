@@ -6,4 +6,8 @@
     <select id="findAllRoleIds" resultType="com.lrl.pojo.Role">
         SELECT id,name,keyword,description from t_role
     </select>
+
+    <select id="findRoleIdsByUserId" parameterType="int" resultType="integer">
+        select role_id from t_user_role where user_id=#{value}
+    </select>
 </mapper>

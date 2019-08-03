@@ -25,4 +25,8 @@ public interface UserService {
     PageResult findPage(QueryPageBean pageBean);
 
     User findById(Integer id);
+
+    void update(User user, Integer[] roleIds);
+
+    void deleteById(Integer id);
 }

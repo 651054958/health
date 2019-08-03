@@ -13,6 +13,24 @@ public class User implements Serializable{
 
 /*birthday,gender,username,password,remark,station,telephone*/
 /*#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone}*/
+/*
+id=
+birthday=
+gender=
+username=
+password=
+remark=
+station=
+telephone=
+
+id=#{id},
+birthday=#{birthday},
+gender=#{gender},
+username=#{username},
+password=#{password},
+remark=#{remark},
+station=#{station},
+telephone=#{telephone}*/
 
 
     private Integer id; // 主键
