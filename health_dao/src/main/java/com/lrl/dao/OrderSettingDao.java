@@ -48,4 +48,5 @@ public interface OrderSettingDao {
      */
     void addReservationByOrderdate(String orderDate);
 
+    void deleteBeforeDay(String cleanEndDay);
 }

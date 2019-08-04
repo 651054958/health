@@ -1,5 +1,6 @@
 package com.lrl.service;
 
+import com.lrl.exception.HealthException;
 import com.lrl.pojo.Member;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,4 +42,5 @@ public interface MemberService {
     Map<String,Object> getMemberReport();
 
 
+    Map<String,Object> getCustomReport(String[] customDay) throws HealthException;
 }

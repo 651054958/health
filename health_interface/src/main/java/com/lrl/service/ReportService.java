@@ -9,4 +9,5 @@ public interface ReportService {
      */
     Map<String,Object> getBusinessReportData() throws Exception;
 
+    Map<String,Object> getCustomReport(String[] customDay);
 }

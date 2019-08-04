@@ -6,15 +6,17 @@ import com.lrl.entity.PageResult;
 import com.lrl.entity.QueryPageBean;
 import com.lrl.entity.Result;
 import com.lrl.exception.HealthException;
+import com.lrl.pojo.Menu;
 import com.lrl.pojo.Role;
 import com.lrl.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LRL
@@ -42,77 +44,80 @@ public class UserController {
     }
 
     /**
-     * 分页查询操作
-     * @return
-     */
-    @RequestMapping("/findPage")
-    public Result getUserInfoList(@RequestBody QueryPageBean pageBean) {
-        try {
-            PageResult pageResult = userService.findPage(pageBean);
-            return new Result(true, MessageConstant.GET_ROLES_SUCCESS, pageResult);
-        } catch (Exception e) {
-            return new Result(false, MessageConstant.GET_ROLES_FAILED);
-        }
-    }
-
-    /**
      * find all permissions
      * @return
      */
-    @RequestMapping("/findAllRoles")
-    public Result findAllRoles(){
+    @PostMapping("/findUserPage")
+    public Result findUserPage(@RequestBody QueryPageBean queryPageBean){
         try {
-            List<Role> roles = userService.findAllRoleIds();
-            return new Result(true,MessageConstant.GET_ROLES_SUCCESS,roles);
+            PageResult userPage = userService.findUserPage(queryPageBean);
+            return new Result(true,MessageConstant.GET_USERLIST_SUCCESS,userPage);
         } catch (Exception e) {
-            return new Result(false,MessageConstant.GET_ROLES_FAILED);
+            throw new HealthException(MessageConstant.GET_USERLIST_FAILED);
         }
     }
 
-    @RequestMapping("/addUser")
-    public Result fun(@RequestBody com.lrl.pojo.User user,Integer[] roleIds){
-        if (!(roleIds.length>0&&roleIds!=null)) {
-            throw new HealthException(MessageConstant.MUST_CHOOSE_ONE_ROLE);
-        }
-        if (user.getTelephone().length()!=11) {
-            throw new HealthException(MessageConstant.ERROR_TELEPHONE_LENGTH);
-        }
+    @GetMapping("/findRole")
+    public Result findRole(){
         try {
-            userService.addUser(roleIds,user);
-            return new Result(true,MessageConstant.ADD_USER_SUCCESS);
+            List<Role>list= userService.findRole();
+            return new Result(true,MessageConstant.GET_ROLES_SUCCESS,list);
         } catch (Exception e) {
-            return new Result(false,MessageConstant.ADD_USER_FAILED);
+            throw new HealthException(MessageConstant.GET_ROLES_FAILED);
         }
     }
 
-    @RequestMapping("/findById")
-    public Result fun(Integer id){
+    @GetMapping("/findById")
+    public Result findById(int id){
         try {
-            com.lrl.pojo.User user = userService.findById(id);
-            return new Result(true,MessageConstant.GET_USER_SUCCESS,user);
+            Map<String,Object> map= userService.findById(id);
+            map.put("password","");
+            return new Result(true,MessageConstant.GET_USER_SUCCESS,map);
         } catch (Exception e) {
-            return new Result(false,MessageConstant.GET_USER_FAILED);
+            throw new HealthException(MessageConstant.GET_USER_FAILED);
         }
     }
 
-    @RequestMapping("/update")
-    public Result update(@RequestBody com.lrl.pojo.User user,Integer[] roleIds){
-
+    @PostMapping("/delete")
+    public Result delete(int id){
         try {
-            userService.update(user,roleIds);
-            return new Result(true,MessageConstant.SUCCESS_UPDATE_USER);
-        } catch (Exception e) {
-            return new Result(false,MessageConstant.FAILED_UPDATE_USER);
-        }
-    }
-
-    @RequestMapping("/delete")
-    public Result delete(Integer id){
-        try {
-            userService.deleteById(id);
+            userService.delete(id);
             return new Result(true,MessageConstant.DELETE_SUCCESS);
         } catch (Exception e) {
-            return new Result(false,MessageConstant.DELETE_FAILED);
+            throw new HealthException(MessageConstant.DELETE_FAILED);
         }
     }
+    @PostMapping("/addUser")
+    public Result addUser(@RequestBody com.lrl.pojo.User user, Integer[] roleIds){
+        try {
+            userService.addUser(user,roleIds);
+            return new Result(true,MessageConstant.ADD_USER_SUCCESS);
+        } catch (Exception e) {
+            throw new HealthException(MessageConstant.ADD_USER_FAILED);
+        }
+    }
+
+    @PostMapping("/update")
+    public Result update(@RequestBody com.lrl.pojo.User user, Integer[] roleIds){
+        try {
+            userService.update(user,roleIds);
+            return new Result(true,MessageConstant.UPDATE_SUCCESS);
+        } catch (Exception e) {
+            throw new HealthException(MessageConstant.UPDATE_FAILED);
+        }
+    }
+
+    @GetMapping("/getMenu")
+    public Result getMenu(HttpServletRequest request){
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = user.getUsername();
+            List<Menu>result= userService.getMenu(username);
+            return new Result(true,MessageConstant.GET_MENU_SUCCESS,result);
+        } catch (Exception e) {
+            throw new HealthException(MessageConstant.GET_MENU_FAIL);
+        }
+    }
+
+
 }

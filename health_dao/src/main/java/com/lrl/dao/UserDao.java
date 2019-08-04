@@ -1,11 +1,13 @@
 package com.lrl.dao;
 
 import com.github.pagehelper.Page;
+import com.lrl.pojo.Menu;
 import com.lrl.pojo.Role;
 import com.lrl.pojo.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserDao {
     /**
@@ -19,52 +21,27 @@ public interface UserDao {
      * find all users
      * @return
      */
-    List<User> findAll();
+    Page<Map<String,Object>> findPage(@Param("queryString") String  queryString);
 
-    /**
-     * findAllRoles
-     * @return
-     */
-    List<Role> findAllRoles();
+    List<Role> findRole();
 
-    /**
-     * add user base info
-     * @param user
-     */
+    Map<String,Object> findById(int id);
+
+    void delete(int id);
+
+    void delete_user_role(int id);
+
+    void add_user_role(@Param("user_id") Integer user_id,@Param("role_id") Integer role_id);
+
     void addUser(User user);
 
-    /**
-     * add userRoles
-     * @param roleId
-     * @param userId
-     */
-    void addUserRoles(@Param("role_id") Integer roleId, @Param("user_id") Integer userId);
-
-    /**
-     * findByCondition
-     * @param queryString
-     * @return
-     */
-    Page<User> findByCondition(String queryString);
-
-    /**
-     * findUserById
-     * @param id
-     * @return
-     */
-    User findUserById(Integer id);
-
-    /**
-     * deleteRolesById
-     * @param userId
-     */
-    void deleteRolesById(Integer userId);
-
-    /**
-     * update user
-     * @param user
-     */
     void update(User user);
 
-    void deleteById(Integer id);
+    int getIdByUsername(String username);
+
+    List<Menu> getMenu(int id);
+
+    Integer[] getRoleIdByUserId(Integer id);
+
+    User findOneById(Integer user_id);
 }

@@ -10,6 +10,7 @@ import com.lrl.service.ReportService;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,6 +53,17 @@ public class ReportController {
             return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS,map);
         } catch (Exception e) {
             return new Result(false,MessageConstant.GET_MEMBER_NUMBER_REPORT_FAIL);
+        }
+    }
+
+    @RequestMapping("/getCustomReport")
+    public Result getCustomReport(@RequestBody String[] customDay){
+        try {
+            System.out.println(customDay);
+            Map<String,Object> map = memberService.getCustomReport(customDay);
+            return new Result(true, MessageConstant.GET_SUCCESS,map);
+        } catch (Exception e) {
+            return new Result(false,MessageConstant.GET_FAILED);
         }
     }
 

@@ -3,30 +3,28 @@ package com.lrl.service;
 import com.lrl.entity.PageResult;
 import com.lrl.entity.QueryPageBean;
 import com.lrl.exception.HealthException;
+import com.lrl.pojo.Menu;
 import com.lrl.pojo.Role;
 import com.lrl.pojo.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
     User findUserByUsername(String username);
 
-    List<User> findAll();
+    PageResult findUserPage(QueryPageBean queryPageBean);
 
-    List<Role> findAllRoleIds();
+    List<Role> findRole();
 
-    void addUser(Integer[] roleIds, User user) throws HealthException;
+    Map<String,Object> findById(int id);
 
-    /**
-     * findPage
-     * @param pageBean
-     * @return
-     */
-    PageResult findPage(QueryPageBean pageBean);
+    void delete(int id);
 
-    User findById(Integer id);
+
+    List<Menu> getMenu(String username);
+
+    void addUser(User user, Integer[] roleIds);
 
     void update(User user, Integer[] roleIds);
-
-    void deleteById(Integer id);
 }

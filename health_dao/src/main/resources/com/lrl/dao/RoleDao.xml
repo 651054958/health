@@ -10,4 +10,55 @@
     <select id="findRoleIdsByUserId" parameterType="int" resultType="integer">
         select role_id from t_user_role where user_id=#{value}
     </select>
+
+    <select id="findByCondition" parameterType="string" resultType="com.lrl.pojo.Role">
+        select * from t_role
+        <where>
+            <if test="value!=null and value.length>0">
+                name like #{value} or keyword like #{value} or description like
+                #{value}
+            </if>
+        </where>
+    </select>
+
+    <insert id="add" parameterType="com.lrl.pojo.Role">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_role(name,keyword,description) VALUES(#{name},#{keyword},#{description})
+    </insert>
+
+    <insert id="addPermissionAndRole" parameterType="integer">
+        insert into t_role_permission(role_id,permission_id) VALUES(#{role_id},#{permission_id})
+    </insert>
+
+    <insert id="addMenuAndRole" parameterType="integer">
+        insert into t_role_menu(role_id,menu_id) VALUES(#{role_id},
+        #{menu_id})
+    </insert>
+
+    <select id="findById" parameterType="integer" resultType="com.lrl.pojo.Role">
+        select * from t_role where id=#{value};
+    </select>
+
+    <select id="findRelationCntbYRoleId" parameterType="integer" resultType="integer">
+        select count(1) from t_role_menu rm,t_role_permission rp where rm.role_id=rp.role_id and rm.role_id=#{value}
+    </select>
+
+    <delete id="deleteById" parameterType="integer">
+        delete from t_role where id=#{value}
+    </delete>
+
+    <update id="update" parameterType="com.lrl.pojo.Role">
+        update t_role set name=#{name},keyword=#{keyword},
+        description=#{description} WHERE id=#{id}
+    </update>
+
+    <delete id="deletePermissionAndRoleByRoleId" parameterType="integer">
+        delete from t_role_permission where role_id=#{value}
+    </delete>
+
+    <delete id="deleteMenuAndRoleByRoleId" parameterType="integer">
+        delete from t_role_menu where role_id=#{value}
+    </delete>
 </mapper>

@@ -102,4 +102,17 @@ public class MessageConstant {
     public static final String FAILED_UPDATE_USER = "update user FAILED";
     public static final String DELETE_SUCCESS = "delete success";
     public static final String DELETE_FAILED = "delete failed";
+    public static final String FIND_ROLE_PAGE_SUCCESS = "find role page success";
+    public static final String FIND_ROLE_PAGE_FAILED = "find role page FAILED";
+    public static final String GET_SUCCESS = "get info success";
+    public static final String GET_FAILED = "get info FAILED";
+    public static final String PARAM_ERROR = "输入的参数有误";
+    public static final String DELETE_FAILED_DEPENDENCE = "被依赖的role无法删除";
+    public static final String UPDATE_SUCCESS = "update success";
+    public static final String UPDATE_FAILED = "update FAILED";
+    public static final String READD_PERMISSION = "重复添加permission了";
+    public static final String ADD_SUCCESS = "ADD_SUCCESS";
+    public static final String ADD_FAILED = "ADD_FAILED";
+    public static final String DELETE_ERROR_DEPENDENCE = "DELETE_ERROR_DEPENDENCE";
+    public static final String PARSE_ERROR = "解析如期错误";
 }

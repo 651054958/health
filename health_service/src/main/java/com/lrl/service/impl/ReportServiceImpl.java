@@ -88,4 +88,9 @@ public class ReportServiceImpl implements ReportService {
         map.put("thisMonthVisitsNumber", thisMonthVisitsNumber);
         return map;
     }
+
+    @Override
+    public Map<String, Object> getCustomReport(String[] customDay) {
+        return null;
+    }
 }

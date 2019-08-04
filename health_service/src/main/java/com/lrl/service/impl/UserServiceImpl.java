@@ -8,7 +8,7 @@ import com.lrl.dao.UserDao;
 import com.lrl.entity.PageResult;
 import com.lrl.entity.QueryPageBean;
 import com.lrl.exception.HealthException;
-import com.lrl.pojo.CheckGroup;
+import com.lrl.pojo.Menu;
 import com.lrl.pojo.Role;
 import com.lrl.pojo.User;
 import com.lrl.service.UserService;
@@ -17,7 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LRL
@@ -38,74 +40,93 @@ public class UserServiceImpl implements UserService {
         return userDao.findUserByUsername(username);
     }
 
-    @Override
-    public List<User> findAll() {
-        return userDao.findAll();
-    }
-
-    @Override
-    public List<Role> findAllRoleIds() {
-        return userDao.findAllRoles();
-    }
-
-    @Override
-    @Transactional
-    public void addUser(Integer[] roleIds, User user) throws HealthException{
-        //checkUsername
-        User userByUsername = userDao.findUserByUsername(user.getUsername());
-        if (userByUsername!=null) {
-            throw new HealthException(MessageConstant.USERNAME_EXIST_ERROR);
-        }
-        userDao.addUser(user);
-        Integer userId = user.getId();
-        for (Integer roleId : roleIds) {
-            userDao.addUserRoles(roleId,userId);
-        }
-    }
-
     /**
-     * findPage
-     *
-     * @param pageBean
+     * 分页查询
+     * @param queryPageBean
      * @return
      */
     @Override
-    public PageResult findPage(QueryPageBean pageBean) {
-        if (!StringUtils.isEmpty(pageBean.getQueryString())) {
-            pageBean.setQueryString("%"+pageBean.getQueryString()+"%");
+    public PageResult findUserPage(QueryPageBean queryPageBean) {
+        if (!StringUtils.isEmpty(queryPageBean.getQueryString())) {
+            queryPageBean.setQueryString("%"+queryPageBean.getQueryString()+"%");
         }
-        PageHelper.startPage(pageBean.getCurrentPage(),pageBean.getPageSize());
-        Page<User> page = userDao.findByCondition(pageBean.getQueryString());
+        PageHelper.startPage(queryPageBean.getCurrentPage(),queryPageBean.getPageSize());
+        Page<Map<String,Object>> page=userDao.findPage(queryPageBean.getQueryString());
         return new PageResult(page.getTotal(),page.getResult());
     }
 
     @Override
-    public User findById(Integer id) {
-        User userById = userDao.findUserById(id);
-        userById.setPassword("");
-        return userById;
+    public List<Role> findRole() {
+        return userDao.findRole();
     }
 
     @Override
-    @Transactional
+    public Map<String,Object> findById(int id) {
+        return userDao.findById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(int id) {
+        //删除用户需将其联系t_user_role一同删除
+        userDao.delete_user_role(id);
+        userDao.delete(id);
+    }
+
+
+
+    /*@Override
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Map<String, String> map) {
+        Integer role_id = Integer.parseInt((String) map.get("role_id"));
+        Integer user_id = Integer.parseInt( map.get("id"));
+        userDao.delete_user_role(user_id);
+        userDao.add_user_role(user_id,role_id);
+        userDao.update(map);
+    }*/
+
+    @Override
+    public List<Menu> getMenu(String username) {
+        User user = userDao.findUserByUsername(username);
+        Integer id = user.getId();
+        Integer[] roleIds=userDao.getRoleIdByUserId(id);
+        List<Menu> list = new ArrayList<>();
+        for (Integer roleId : roleIds) {
+            List<Menu> list1 = userDao.getMenu(roleId);
+            for (Menu menu : list1) {
+                list.add(menu);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public void addUser(User user, Integer[] roleIds) {
+        if (roleIds.length==0 || roleIds==null) {
+            throw new HealthException(MessageConstant.ILLEGAL_INPUT);
+        }
+        userDao.addUser(user);
+        Integer userId = user.getId();
+        for (Integer roleId : roleIds) {
+            userDao.add_user_role(userId,roleId);
+        }
+    }
+
+    @Override
     public void update(User user, Integer[] roleIds) {
+        Integer user_id = user.getId();
         String password = user.getPassword();
-        if (password==null || password.length()==0 ||password=="") {
-            User userById = userDao.findUserById(user.getId());
-            user.setPassword(userById.getPassword());
+        if (password==null ||password=="") {
+            User query_User = userDao.findOneById(user_id);
+            user.setPassword(query_User.getPassword());
         }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setPassword(encoder.encode(user.getPassword()));
-        userDao.update(user);
-        Integer userId = user.getId();
-        userDao.deleteRolesById(userId);
+        userDao.delete_user_role(user_id);
         for (Integer roleId : roleIds) {
-            userDao.addUserRoles(roleId,userId);
+            userDao.add_user_role(user_id,roleId);
         }
+        userDao.update(user);
     }
 
-    @Override
-    public void deleteById(Integer id) {
-        userDao.deleteById(id);
-    }
 }

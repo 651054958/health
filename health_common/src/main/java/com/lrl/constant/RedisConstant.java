@@ -25,4 +25,6 @@ public class RedisConstant {
      * 上线的timeout
      */
     public static final int TIMEOUT_RELEASE = 120;
+    public static final String REDIS_PACKAGE = "PACKAGE_LIST_IN_REDIS";
+    public static final String PACKAGE_IN_DB = "PACKAGE_IN_DB";
 }

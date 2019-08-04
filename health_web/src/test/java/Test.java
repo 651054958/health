@@ -1,4 +1,7 @@
+import com.lrl.utils.DateUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.text.SimpleDateFormat;
 
 /**
  * @author LRL
@@ -10,12 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class Test {
     public static void main(String[] args) {
-        /*BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String admin = encoder.encode("admin");
-        System.out.println(admin);
-        System.out.println(encoder.matches("visitor","$2a$10$/MCGUn7bsKkWXI.8IksOUesq5pQlHDCHJQ1hjsKhd1QMN2.J/1kXC"));*/
-        String dat2 = "2019-07-aa";
-        String rep = dat2.replaceAll(".", "-");
-        System.out.println(rep);
+
     }
 }

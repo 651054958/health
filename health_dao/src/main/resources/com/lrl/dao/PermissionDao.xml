@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lrl.dao.PermissionDao">
+    <select id="findAllPermissions" resultType="com.lrl.pojo.Permission">
+        select * from t_permission
+    </select>
+
+    <select id="findPermissionIdsByRoleId" parameterType="integer" resultType="integer">
+        select permission_id from t_role_permission where role_id=#{value}
+    </select>
+
+    <select id="findByCondition" parameterType="string" resultType="com.lrl.pojo.Permission">
+        select * from t_permission
+        <where>
+            <if test="value!=null and value.length>0">
+                keyword like #{value} or name like #{value} or description like
+                #{value}
+            </if>
+        </where>
+    </select>
+
+    <select id="findByKeyword" parameterType="string" resultType="integer">
+        select count(1) from t_permission where keyword=#{value}
+    </select>
+
+    <insert id="add" parameterType="com.lrl.pojo.Permission">
+        insert into t_permission(name,keyword,description) VALUES(#{name},#{keyword},#{description})
+    </insert>
+
+    <select id="findById" parameterType="integer" resultType="com.lrl.pojo.Permission">
+        SELECT * from t_permission where id=#{value}
+    </select>
+
+    <select id="findRelationCntById" parameterType="integer" resultType="integer">
+        select count(1) from t_role_permission where permission_id=#{value}
+    </select>
+
+    <delete id="deleteById" parameterType="integer">
+        delete from t_permission where id=#{value}
+    </delete>
+</mapper>
